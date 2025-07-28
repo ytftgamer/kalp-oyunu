@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr" >
+<head>
+  <meta charset="UTF-8" />
+  <title>Kalp Tıklama Oyunu - Şık Tasarım</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      margin: 0;
+      padding: 40px 20px 20px;
+      overflow-x: hidden;
+      color: #721121;
+    }
+
+    #score {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 40px;
+      text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.7);
+    }
+
+    #bigHeart {
+      font-size: 160px;
+      color: #e91e63;
+      cursor: pointer;
+      filter: drop-shadow(0 0 6px #e91e63);
+      transition: transform 0.15s ease, filter 0.15s ease;
+      position: relative;
+      user-select: none;
+    }
+    #bigHeart:hover {
+      filter: drop-shadow(0 0 12px #f48fb1);
+      transform: scale(1.05);
+    }
+    #bigHeart:active {
+      transform: scale(0.9);
+      filter: drop-shadow(0 0 20px #ad1457);
+    }
+
+    .smallHeart {
+      position: fixed;
+      font-size: 30px;
+      color: #f50057;
+      filter: drop-shadow(0 0 4px #f50057);
+      left: 50%;
+      top: 50%;
+      transform: translateX(-50%) translateY(0) scale(1);
+      animation: fallRotate 1.7s forwards;
+      pointer-events: none;
+      user-select: none;
+      z-index: 9999;
+    }
+
+    @keyframes fallRotate {
+      0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(calc(-50% + 60px)) translateY(400px) scale(0.4) rotate(720deg);
+      }
+    }
+
+    #endMessage {
+      font-size: 36px;
+      font-weight: 700;
+      margin-top: 60px;
+      color: #880e4f;
+      text-shadow: 2px 2px 8px #f48fb1;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="score">Kalan skor: 1000</div>
+  <div id="bigHeart" title="Tıkla!">❤️</div>
+  <div id="endMessage"></div>
+
+  <script>
+    const bigHeart = document.getElementById('bigHeart');
+    const scoreDisplay = document.getElementById('score');
+    const endMessage = document.getElementById('endMessage');
+
+    let score = 0;
+    const maxScore = 1000;
+    let gameOver = false;
+
+    bigHeart.addEventListener('click', () => {
+      if (gameOver) return;
+
+      score += 50;
+      let remaining = maxScore - score;
+      if (remaining < 0) remaining = 0;
+      scoreDisplay.textContent = `Kalan skor: ${remaining}`;
+
+      // Küçük kalp oluştur
+      const smallHeart = document.createElement('div');
+      smallHeart.classList.add('smallHeart');
+      // Küçük kalbin başlangıç pozisyonunu büyük kalbin üstü olarak ayarla
+      const rect = bigHeart.getBoundingClientRect();
+      smallHeart.style.left = (rect.left + rect.width / 2 + (Math.random() * 40 - 20)) + 'px';
+      smallHeart.style.top = (rect.top + rect.height / 2) + 'px';
+      smallHeart.textContent = '❤️';
+      document.body.appendChild(smallHeart);
+
+      // Animasyon bitince küçük kalbi kaldır
+      smallHeart.addEventListener('animationend', () => {
+        smallHeart.remove();
+      });
+
+      if (score >= maxScore) {
+        gameOver = true;
+        endMessage.innerHTML = `Hepsi sanaaa ❤️`;
+        bigHeart.style.cursor = 'default';
+        bigHeart.style.filter = 'grayscale(100%)';
+      }
+    });
+  </script>
+
+</body>
+</html>
